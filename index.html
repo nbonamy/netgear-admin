@@ -21,13 +21,21 @@
   <p class="title is-3">NETGEAR Admin</p>
   <div class="section">
     <p class="title is-4">Block services</p>
-    <a class="button is-success has-text-weight-bold" href="netgear-admin.py?action=unblock">Never</a>
-    <a class="button is-link has-text-weight-bold" href="netgear-admin.py?action=schedule">Per schedule</a>
-    <a class="button is-danger has-text-weight-bold" href="netgear-admin.py?action=block">Always</a>
+    <a id="never" class="button is-success has-text-weight-bold" href="netgear-admin.py?action=unblock">Never</a>
+    <a id="perschedule" class="button is-link has-text-weight-bold" href="netgear-admin.py?action=schedule">Per schedule</a>
+    <a id="always" class="button is-danger has-text-weight-bold" href="netgear-admin.py?action=block">Always</a>
   </div>
   <div class="section">
       <p class="title is-4">Administration</p>
       <a class="button is-danger has-text-weight-bold" href="netgear-admin.py?action=reboot">Reboot</a>
   </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function(event) {
+      var url = new URL(window.location);
+      var blockStatus = url.searchParams.get('status');
+      var button = document.getElementById(blockStatus);
+      button.setAttribute('disabled', true);
+    });
+  </script>
 </body>
 </html>

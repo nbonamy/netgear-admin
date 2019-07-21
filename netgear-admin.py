@@ -95,6 +95,9 @@ class NetgearAdmin(object):
         logger.debug('Getting page...')
         try:
 
+            # return value
+            rc = True
+
             # first connect
             self.browser = self.get_browser()
             self.get_start_page()
@@ -111,15 +114,16 @@ class NetgearAdmin(object):
             # block/unblock
             if self.action == ACTION_BLOCK or self.action == ACTION_UNBLOCK or self.action == ACTION_SCHEDULE:
                 self.get_block_page()
-                self.block_services(self.action)
+                rc = self.block_services(self.action)
 
             # done
             self.browser.quit()
+            return rc
 
         except Exception:
             if self.browser is not None:
                 self.browser.quit()
-            raise
+            return False
 
     def get_start_page(self):
         self.get(self.START_URL)
@@ -179,6 +183,10 @@ class NetgearAdmin(object):
                 time.sleep(1)
                 self.wait_for_page_load()
                 self.do_screenshot()
+                radios = self.browser.find_elements_by_name('skeyword')
+                for r in radios:
+                    if r.get_attribute('checked'):
+                        return r.get_attribute('value')
                 return True
         return False
 
@@ -384,12 +392,18 @@ def main():
         debug=debug,
         browser_name=args.browser_name
     )
-    script.run()
+    res = script.run()
 
     # cgi requires header
-    if isCgi:
-        print('Status: 200 OK')
-        print('Location: index.html')
+    if True or isCgi:
+        if not res:
+            print('Status: 500 Server Error')
+        else:
+            print('Status: 200 OK')
+        if type(res) is str:
+            print('Location: index.html?status={}'.format(res))
+        else:
+            print('Location: index.html')
         print()
 
 if __name__ == "__main__":
