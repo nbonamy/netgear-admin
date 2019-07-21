@@ -172,7 +172,7 @@ class NetgearAdmin(object):
         self.browser.find_element_by_id('reboot').click()
         time.sleep(1)
         logger.debug('Confirming reboot')
-        alert = self.browser.switch_to_alert()
+        alert = self.browser.switch_to.alert()
         alert.accept()
         self.wait_for_page_load()
 
