@@ -132,6 +132,19 @@ class NetgearAdmin(object):
         self.do_screenshot()
 
     def check_login(self):
+
+        # check multilogin
+        try:
+            self.browser.find_element_by_xpath("//form[starts-with(@action, 'multi_login.cgi')]")
+            logger.info('Multi login warning screen detected')
+            self.browser.find_element_by_name('yes').click()
+            self.wait_for_page_load()
+            self.do_screenshot()
+        except:
+            logger.debug('No Multi login warning screen detected')
+            pass
+
+        # now it should be ok
         try:
             self.browser.find_element_by_name('logout')
             return True
