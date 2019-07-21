@@ -27,7 +27,7 @@ def getConfigValue(args, name, default=False):
         qs = os.environ['QUERY_STRING']
         params = dict(parse_qs(qs))
         if name in params:
-            value = params[name]
+            value = params[name][0]
             if value:
                 return value
 
