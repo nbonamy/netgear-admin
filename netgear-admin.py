@@ -270,7 +270,7 @@ class NetgearAdmin(object):
             logger.debug('getting Chrome browser (local) with --headless')
             chrome_options = Options()
             chrome_options.add_argument("--headless")
-            browser = webdriver.Chrome(chrome_options=chrome_options)
+            browser = webdriver.Chrome(options=chrome_options)
         elif self.browser_name == 'phantomjs':
             logger.debug("getting PhantomJS browser (local)")
             dcap = dict(DesiredCapabilities.PHANTOMJS)
@@ -341,7 +341,7 @@ class NetgearAdmin(object):
             EC.presence_of_element_located((_by, arg))
         )
 
-def parse_args(argv):
+def parse_args(argv, isCgi):
     browsers = ['phantomjs', 'firefox', 'chrome', 'chrome-headless']
     actions = [ACTION_REBOOT, ACTION_BLOCK, ACTION_SCHEDULE, ACTION_UNBLOCK, ACTION_STATUS]
     p = argparse.ArgumentParser(description='Netgear admin', prog='netgear-admin')
@@ -350,7 +350,7 @@ def parse_args(argv):
     p.add_argument('-i', '--ip', dest='router_ip', type=str, help='Router IP')
     p.add_argument('-u', '--username', dest='username', type=str, help='Router Username (default is admin)')
     p.add_argument('-p', '--password', dest='password', type=str, help='Router Password')
-    p.add_argument('-a', '--action', dest='action', type=str, choices=actions, help='Action to perform')
+    p.add_argument('-a', '--action', dest='action', type=str, required=not isCgi, choices=actions, help='Action to perform')
     args = p.parse_args(argv)
     return args
 
@@ -372,7 +372,7 @@ def main():
     isCgi = 'GATEWAY_INTERFACE' in os.environ
 
     # parse args
-    args = parse_args(sys.argv[1:])
+    args = parse_args(sys.argv[1:], isCgi)
 
     # set logging level
     debug = False
@@ -418,6 +418,9 @@ def main():
         else:
             print('Location: index.html')
         print()
+    else:
+        if action == ACTION_STATUS:
+            print(res)
 
 if __name__ == "__main__":
     main()
