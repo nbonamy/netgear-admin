@@ -1,16 +1,10 @@
 #!/usr/bin/env python3
-import sys
 import os
+import sys
+import json
 import argparse
 import logging
-import json
-import codecs
-import time
-import re
-from datetime import datetime
-import socket
-from operator import itemgetter
-from copy import deepcopy
+from urllib.parse import urlparse, parse_qs
 
 # some constants
 CONFIG_FILE = 'config.json'
@@ -21,11 +15,20 @@ ACTION_UNBLOCK = 'unblock'
 # to get configuration
 def getConfigValue(args, name, default=False):
 
-    # first check args
+    # check args
     if name in vars(args).keys():
         value = vars(args)[name]
         if value:
             return value
+
+    # check query string
+    if 'QUERY_STRING' in os.environ:
+        qs = os.environ['QUERY_STRING']
+        params = dict(parse_qs(qs))
+        if name in params:
+            value = params[name]
+            if value:
+                return value
 
     # if not found look in config
     config = json.load(open(CONFIG_FILE))
@@ -322,7 +325,7 @@ def parse_args(argv):
     p.add_argument('-i', '--ip', dest='router_ip', type=str, help='Router IP')
     p.add_argument('-u', '--username', dest='username', type=str, help='Router Username (default is admin)')
     p.add_argument('-p', '--password', dest='password', type=str, help='Router Password')
-    p.add_argument('-a', '--action', dest='action', type=str, required=True, choices=actions, help='Action to perform')
+    p.add_argument('-a', '--action', dest='action', type=str, choices=actions, help='Action to perform')
     args = p.parse_args(argv)
     return args
 
@@ -340,6 +343,9 @@ def set_log_level_format(level, format):
 
 def main():
 
+    # need to handle cgi too
+    isCgi = 'GATEWAY_INTERFACE' in os.environ
+
     # parse args
     args = parse_args(sys.argv[1:])
 
@@ -350,6 +356,7 @@ def main():
         debug = True
 
     # get config values
+    action = getConfigValue(args, 'action')
     router_ip = getConfigValue(args, 'router_ip')
     username = getConfigValue(args, 'username', 'admin')
     password = getConfigValue(args, 'password')
@@ -357,6 +364,10 @@ def main():
     # those are required
     if not router_ip or not username or not password:
         msg = 'ERROR: you need to specify router IP, username and password through command line arguments or config.json'
+        logger.critical(msg)
+        raise SystemExit(msg)
+    if not action:
+        msg = 'ERROR: you need to specify at least one action to perform'
         logger.critical(msg)
         raise SystemExit(msg)
 
@@ -372,7 +383,6 @@ def main():
     script.run()
 
     # cgi requires header
-    isCgi = 'GATEWAY_INTERFACE' in os.environ
     if isCgi:
         print('Status: 200 OK')
         print('Location: index.html')
