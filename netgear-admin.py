@@ -168,10 +168,13 @@ class NetgearAdmin(object):
             return False
 
     def reboot(self):
+        logger.debug('Clicking reboot button')
         self.browser.find_element_by_id('reboot').click()
         time.sleep(1)
+        logger.debug('Confirming reboot')
         alert = self.browser.switch_to_alert()
         alert.accept()
+        self.wait_for_page_load()
 
     def block_services(self, action):
         apply = self.browser.find_element_by_name('apply')
@@ -405,7 +408,7 @@ def main():
     res = script.run()
 
     # cgi requires header
-    if True or isCgi:
+    if isCgi:
         if not res:
             print('Status: 500 Server Error')
         else:
