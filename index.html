@@ -36,9 +36,18 @@
   <script>
     document.addEventListener("DOMContentLoaded", function(event) {
       var url = new URL(window.location);
+      var action = url.searchParams.get('action');
+      if (action === 'getstatus') {
+        window.location = 'netgear-admin.py?action=status';
+        return;
+      }
       var blockStatus = url.searchParams.get('status');
-      var button = document.getElementById(blockStatus);
-      button.setAttribute('disabled', true);
+      if (blockStatus !== null) {
+        var button = document.getElementById(blockStatus);
+        if (button !== null) {
+          button.setAttribute('disabled', true);
+        }
+      }
     });
   </script>
 </body>
