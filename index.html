@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Netgear Admin UI</title>
+  <title>NETGEAR Admin UI</title>
+  <link rel="shortcut icon" href="https://www.netgear.com/favicon.ico" type="image/x-icon" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css" />
   <style>
     body {
@@ -21,11 +22,16 @@
   </style>
 </head>
 <body>
-  <h2>Netgear Admin</h2>
+  <p class="title is-3">NETGEAR Admin</p>
   <div class="section">
-    <a class="button is-warning" href="netgear-admin.py?action=block">Block</a>
-    <a class="button is-success" href="netgear-admin.py?action=unblock">Unblock</a>
-    <a class="button is-danger" href="netgear-admin.py?action=reboot">Reboot</a>
+    <p class="title is-4">Block services</p>
+    <a class="button is-success has-text-weight-bold" href="netgear-admin.py?action=unblock">Never</a>
+    <a class="button is-link has-text-weight-bold" href="netgear-admin.py?action=schedule">Per schedule</a>
+    <a class="button is-danger has-text-weight-bold" href="netgear-admin.py?action=block">Always</a>
+  </div>
+  <div class="section">
+      <p class="title is-4">Administration</p>
+      <a class="button is-danger has-text-weight-bold" href="netgear-admin.py?action=reboot">Reboot</a>
   </div>
 </body>
 </html>

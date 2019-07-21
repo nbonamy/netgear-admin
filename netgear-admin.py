@@ -11,6 +11,7 @@ from urllib.parse import urlparse, parse_qs
 CONFIG_FILE = 'config.json'
 ACTION_REBOOT = 'reboot'
 ACTION_BLOCK = 'block'
+ACTION_SCHEDULE = 'schedule'
 ACTION_UNBLOCK = 'unblock'
 
 # to get configuration
@@ -108,9 +109,9 @@ class NetgearAdmin(object):
                 self.reboot()
 
             # block/unblock
-            if self.action == ACTION_BLOCK or self.action == ACTION_UNBLOCK:
+            if self.action == ACTION_BLOCK or self.action == ACTION_UNBLOCK or self.action == ACTION_SCHEDULE:
                 self.get_block_page()
-                self.block_services(self.action == ACTION_BLOCK)
+                self.block_services(self.action)
 
             # done
             self.browser.quit()
@@ -162,12 +163,14 @@ class NetgearAdmin(object):
         alert = self.browser.switch_to_alert()
         alert.accept()
 
-    def block_services(self, value):
+    def block_services(self, action):
         apply = self.browser.find_element_by_name('apply')
         radios = self.browser.find_elements_by_name('skeyword')
         for radio in radios:
             attr = radio.get_attribute('value')
-            if (value and attr == 'perschedule') or (not value and attr == 'never'):
+            if ((action == ACTION_BLOCK and attr == 'always') or
+                (action == ACTION_UNBLOCK and attr == 'never') or
+                (action == ACTION_SCHEDULE and attr == 'perschedule')):
                 logger.info('Clicking "{0}" block option'.format(attr))
                 radio.click()
                 self.do_screenshot()
@@ -319,7 +322,7 @@ class NetgearAdmin(object):
 
 def parse_args(argv):
     browsers = ['phantomjs', 'firefox', 'chrome', 'chrome-headless']
-    actions = [ACTION_REBOOT, ACTION_BLOCK, ACTION_UNBLOCK]
+    actions = [ACTION_REBOOT, ACTION_BLOCK, ACTION_SCHEDULE, ACTION_UNBLOCK]
     p = argparse.ArgumentParser(description='Netgear admin', prog='netgear-admin')
     p.add_argument('-v', '--verbose', dest='verbose', action='count', default=0, help='verbose output. specify twice for debug-level output.')
     p.add_argument('-b', '--browser', dest='browser_name', type=str, default='chrome-headless', choices=browsers, help='Browser name/type to use')
