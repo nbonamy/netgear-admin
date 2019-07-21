@@ -377,7 +377,7 @@ def main():
         router_ip,
         username,
         password,
-        action=args.action,
+        action=action,
         debug=debug,
         browser_name=args.browser_name
     )
