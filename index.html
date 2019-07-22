@@ -28,16 +28,20 @@
 
       // link clicks
       $('a').click(function() {
+        let self = $(this);
         $('body').addClass('processing');
         $('#running').removeClass('is-hidden');
-        return true;
+        setTimeout(function() {
+            window.location = self.attr('href');
+        }, 100)
+        return false;
       });
 
       // get url parameters
-      var url = new URL(window.location);
+      let url = new URL(window.location);
 
       // get status initially
-      var action = url.searchParams.get('action');
+      let action = url.searchParams.get('action');
       if (action === 'getstatus') {
         $('body').addClass('processing');
         $('#loading').removeClass('is-hidden');
@@ -46,7 +50,7 @@
       }
 
       // blocking status
-      var blockStatus = url.searchParams.get('status');
+      let blockStatus = url.searchParams.get('status');
       if (blockStatus !== null) {
         $('#'+blockStatus).attr('disabled', true);
       }
