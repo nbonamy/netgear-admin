@@ -11,6 +11,9 @@
       text-align: center;
       margin: 64px 128px;
     }
+    body.processing div.section {
+      display: none;
+    }
     a {
       margin-left: 8px;
       margin-right: 8px
@@ -18,10 +21,43 @@
     .button[disabled] {
       background-color: gray !important;
     }
-  </style>
+    .loading .one {
+      opacity: 0;
+      -webkit-animation: dot 1.3s infinite;
+      -webkit-animation-delay: 0.0s;
+      animation: dot 1.3s infinite;
+      animation-delay: 0.0s;
+    }
+    .loading .two {
+      opacity: 0;
+      -webkit-animation: dot 1.3s infinite;
+      -webkit-animation-delay: 0.2s;
+      animation: dot 1.3s infinite;
+      animation-delay: 0.2s;
+    }
+    .loading .three {
+      opacity: 0;
+      -webkit-animation: dot 1.3s infinite;
+      -webkit-animation-delay: 0.3s;
+      animation: dot 1.3s infinite;
+      animation-delay: 0.3s;
+    }
+    @-webkit-keyframes dot {
+      0% { opacity: 0; }
+      50% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    @keyframes dot {
+      0% { opacity: 0; }
+      50% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+</style>
 </head>
 <body>
   <p class="title is-3">NETGEAR Admin</p>
+  <div id="loading" class="loading is-hidden">Getting status<span class="one">.</span><span class="two">.</span><span class="three">.</span></div>
+  <div id="running" class="loading is-hidden">Running command<span class="one">.</span><span class="two">.</span><span class="three">.</span></div>
   <div class="section">
     <p class="title is-4">Block services</p>
     <a id="status" class="button is-info has-text-weight-bold" href="netgear-admin.py?action=status">Get Status</a>
@@ -33,21 +69,25 @@
       <p class="title is-4">Administration</p>
       <a class="button is-danger has-text-weight-bold" href="netgear-admin.py?action=reboot">Reboot</a>
   </div>
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", function(event) {
+    $(document).ready(function() {
       var url = new URL(window.location);
       var action = url.searchParams.get('action');
       if (action === 'getstatus') {
+        $('body').addClass('processing');
+        $('#loading').removeClass('is-hidden');
         window.location = 'netgear-admin.py?action=status';
         return;
       }
       var blockStatus = url.searchParams.get('status');
       if (blockStatus !== null) {
-        var button = document.getElementById(blockStatus);
-        if (button !== null) {
-          button.setAttribute('disabled', true);
-        }
+        $('#'+blockStatus).attr('disabled', true);
       }
+      $('a').click(function() {
+        $('body').addClass('processing');
+        $('#running').removeClass('is-hidden');
+      });
     });
   </script>
 </body>
