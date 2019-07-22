@@ -5,54 +5,7 @@
   <title>NETGEAR Admin UI</title>
   <link rel="shortcut icon" href="https://www.netgear.com/favicon.ico" type="image/x-icon" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css" />
-  <style>
-    body {
-      font-family: -apple-system,Roboto,"Segoe UI",Helvetica,Arial,sans-serif;
-      text-align: center;
-      margin: 64px 128px;
-    }
-    body.processing div.section {
-      display: none;
-    }
-    a {
-      margin-left: 8px;
-      margin-right: 8px
-    }
-    .button[disabled] {
-      background-color: gray !important;
-    }
-    .loading .one {
-      opacity: 0;
-      -webkit-animation: dot 1.3s infinite;
-      -webkit-animation-delay: 0.0s;
-      animation: dot 1.3s infinite;
-      animation-delay: 0.0s;
-    }
-    .loading .two {
-      opacity: 0;
-      -webkit-animation: dot 1.3s infinite;
-      -webkit-animation-delay: 0.2s;
-      animation: dot 1.3s infinite;
-      animation-delay: 0.2s;
-    }
-    .loading .three {
-      opacity: 0;
-      -webkit-animation: dot 1.3s infinite;
-      -webkit-animation-delay: 0.3s;
-      animation: dot 1.3s infinite;
-      animation-delay: 0.3s;
-    }
-    @-webkit-keyframes dot {
-      0% { opacity: 0; }
-      50% { opacity: 0; }
-      100% { opacity: 1; }
-    }
-    @keyframes dot {
-      0% { opacity: 0; }
-      50% { opacity: 0; }
-      100% { opacity: 1; }
-    }
-</style>
+  <link rel="stylesheet" href="css/index.css" />
 </head>
 <body>
   <p class="title is-3">NETGEAR Admin</p>
@@ -72,7 +25,18 @@
   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
   <script>
     $(document).ready(function() {
+
+      // link clicks
+      $('a').click(function() {
+        $('body').addClass('processing');
+        $('#running').removeClass('is-hidden');
+        return true;
+      });
+
+      // get url parameters
       var url = new URL(window.location);
+
+      // get status initially
       var action = url.searchParams.get('action');
       if (action === 'getstatus') {
         $('body').addClass('processing');
@@ -80,14 +44,13 @@
         window.location = 'netgear-admin.py?action=status';
         return;
       }
+
+      // blocking status
       var blockStatus = url.searchParams.get('status');
       if (blockStatus !== null) {
         $('#'+blockStatus).attr('disabled', true);
       }
-      $('a').click(function() {
-        $('body').addClass('processing');
-        $('#running').removeClass('is-hidden');
-      });
+
     });
   </script>
 </body>
