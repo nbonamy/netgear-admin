@@ -412,7 +412,7 @@ def main():
         if not res:
             print('Status: 500 Server Error')
         else:
-            print('Status: 200 OK')
+            print('Status: 302 Found')
         if type(res) is str:
             print('Location: index.html?status={}'.format(res))
         else:
